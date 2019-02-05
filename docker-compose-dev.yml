@@ -1,0 +1,68 @@
+version: '2'
+services:
+  webturista:
+    container_name: webturista
+    build:
+      context: ./WebTurista/source/
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    volumes:
+      - ./WebTurista/source/:/usr/share/nginx/html/
+      - /usr/share/nginx/html/components
+    ports:
+      - "3500:80"
+  proxyreverso:
+    container_name: proxyreverso
+    build:
+      context: .
+      dockerfile: ./Dockerfile-dev
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+      - admin
+      - webturista
+  admin:
+    container_name: admin
+    build:
+      context: ./WebAdministrador/source/
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    ports:
+      - "8090:80"
+    volumes:
+      - ./WebAdministrador/source/:/usr/share/nginx/html/
+      - /usr/share/nginx/html/components
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - ./_volumen_compartido/db/:/data/db/
+    ports: ["27019:27017"]
+  api:
+    container_name: api
+    build:
+      context: ./ApiSistema/source/
+      dockerfile: Dockerfile
+    volumes:
+      - ./_volumen_compartido/uploads/:/usr/src/app/public/uploads/
+      - ./ApiSistema/source/:/usr/src/app/
+      - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+    ports:
+      - "8080:80"
+      - "5858:5858"
+    command:  [ "npm", "run" ,  "debug" ]
+  prerender:
+    container_name: prerender
+    build:
+      context: ./Prerender/sources/
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - webturista
+      - proxyreverso
