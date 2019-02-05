@@ -1,0 +1,44 @@
+DNS
+----
+
+> nslookup osde.com.ar
+
+> whois -b 190.210.225.192
+
+>host -t NS osde.com.ar 
+
+
+
+Buscar en archivos:
+-------------------
+
+> grep --exclude=\*.{war,log,dmp,trc} --exclude-dir=\*{deploy,bin} -rnw 'dir-donde-buscar' -e 'text-a-buscar'
+
+
+Cliente/servidor
+----------------
+
+#prcedimiento que escucha
+> nc -l 127.0.0.1 1234
+#procedimiento que se conecta
+> nc 127.0.0.1 1234
+
+#escribir simplemente y enter
+
+
+Scan ports
+----------
+
+> sudo nmap -O -v osde.com.ar
+
+
+Create user
+-----------
+
+> sudo useradd -m -d /home/jujue -s /bin/bash jujue
+> echo "jujue:yp27962768" | sudo chpasswd
+> sudo usermod -aG root jujue
+
+
+ 
+
